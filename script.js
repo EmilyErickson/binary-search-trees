@@ -53,13 +53,13 @@ class Tree {
     }
   }
 
-  remove(data) {
-    const removeNode = (root, data) => {
+  delete(data) {
+    const deleteNode = (root, data) => {
       if (root === null) return root;
       if (data < root.data) {
-        root.left = removeNode(root.left, data);
+        root.left = deleteNode(root.left, data);
       } else if (data > root.data) {
-        root.right = removeNode(root.right, data);
+        root.right = deleteNode(root.right, data);
       } else {
         if (root.left === null) {
           return root.right;
@@ -75,11 +75,11 @@ class Tree {
           return minValue;
         };
         root.data = minimumVal(root.right);
-        root.right = removeNode(root.right, root.data);
+        root.right = deleteNode(root.right, root.data);
       }
       return root;
     };
-    this.root = removeNode(this.root, data);
+    this.root = deleteNode(this.root, data);
   }
 
   find(data) {
@@ -167,17 +167,25 @@ class Tree {
     return result;
   }
 
-  height(node = this.root) {
-    if (node === null) return 0;
+  height(data) {
+    if (!this.root) return 0;
+    const findHeight = (node) => {
+      if (node === null) return 0;
 
-    let left = this.height(node.left);
-    let right = this.height(node.right);
+      let left = findHeight(node.left);
+      let right = findHeight(node.right);
 
-    if (left > right) {
-      return left + 1;
-    } else {
-      return right + 1;
-    }
+      if (left > right) {
+        return left + 1;
+      } else {
+        return right + 1;
+      }
+    };
+
+    let treeHeight = findHeight(this.root) - 1;
+    let nodeDepth = this.depth(data);
+    let nodeHeight = treeHeight - nodeDepth;
+    return nodeHeight;
   }
 
   depth(data) {
@@ -200,8 +208,21 @@ class Tree {
       return 1 + Math.min(findMin(node.left), findMin(node.right));
     };
 
+    const findMax = (node) => {
+      if (node === null) return 0;
+
+      let left = findMax(node.left);
+      let right = findMax(node.right);
+
+      if (left > right) {
+        return left + 1;
+      } else {
+        return right + 1;
+      }
+    };
+
     let node = this.root;
-    let max = this.height();
+    let max = findMax(node);
     let min = findMin(node);
     if (max - min <= 1) return true;
     return false;
